@@ -11,7 +11,7 @@ function App() {
   }
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
+    <div className={`min-h-screen bg-red-500 ${darkMode ? 'dark' : ''}`}>
       <div className="container mx-auto p-4">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Staff Scheduler</h1>
