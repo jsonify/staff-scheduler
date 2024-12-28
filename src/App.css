@@ -1,29 +1,102 @@
+:root {
+  --primary-color: #646cff;
+  --secondary-color: #61dafb;
+  --background-color: #ffffff;
+  --text-color: #213547;
+  --border-color: #ddd;
+}
+
+.dark {
+  --primary-color: #8189ff;
+  --secondary-color: #7ae8ff;
+  --background-color: #1a1a1a;
+  --text-color: #ffffff;
+  --border-color: #444;
+}
+
 #root {
-  max-width: 1280px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  min-height: 100vh;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter, transform;
-  transition: all 300ms;
-}
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter, transform;
-  transition: all 300ms;
-  display: inline-block; /* Ensure proper animation behavior */
+.scheduler-app {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-  transform: translateY(-10px);
-  animation: bounce 0.5s ease-in-out;
-  animation-fill-mode: both; /* Maintain end state of animation */
+.scheduler-container {
+  display: grid;
+  grid-template-columns: 250px 1fr 250px;
+  gap: 2rem;
+}
+
+.schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.time-block {
+  border: 1px solid var(--border-color);
+  padding: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: var(--background-color);
+}
+
+.time-block.assigned {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.employee-list {
+  border-right: 1px solid var(--border-color);
+  padding-right: 1rem;
+}
+
+.employee-item {
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  border-radius: 4px;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.role-badge.teacher {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.role-badge.paraeducator {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  background-color: var(--primary-color);
+  color: white;
+  cursor: pointer;
 }
 
 @keyframes bounce {
