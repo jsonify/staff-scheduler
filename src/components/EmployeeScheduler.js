@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import TimeBlock from './TimeBlock';
 import EmployeeCard from './EmployeeCard';
-import '../styles/Scheduler.css';
+import '../../styles/Scheduler.css';
 
 const EmployeeScheduler = () => {
   const [timeBlocks, setTimeBlocks] = useState([]);
