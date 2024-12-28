@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Scheduler from './components/Scheduler'
 
 function App() {
+  console.log('App component rendering...') // Debug log
   const [darkMode, setDarkMode] = useState(false)
 
   const toggleDarkMode = () => {
