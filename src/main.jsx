@@ -1,4 +1,4 @@
-console.log('Script is loading...')
+console.log('Main script is loading...')
 
 const rootElement = document.getElementById('root')
 if (rootElement) {
@@ -7,3 +7,6 @@ if (rootElement) {
 } else {
   console.error('Failed to find root element')
 }
+
+// Add some basic styles to verify CSS is working
+document.body.style.backgroundColor = 'yellow'
