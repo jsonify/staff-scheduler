@@ -5,7 +5,8 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background: linear-gradient(45deg, #242424, #1a1a1a, #0f0f0f);
+  animation: gradientBG 15s ease infinite;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -44,7 +45,32 @@ button {
   font-family: inherit;
   background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: all 0.25s;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(100, 108, 255, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(100, 108, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(100, 108, 255, 0);
+  }
+}
+
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 button:hover {
   border-color: #646cff;
