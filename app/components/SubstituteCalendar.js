@@ -25,19 +25,30 @@ const SubstituteCalendar = () => {
   const [assignments, setAssignments] = useState([]);
 
   // Handle drag start
-  const handleDragStart = (e, teacher) => {
+  const handleDragStart = (e, teacher, time, classroom) => {
     e.dataTransfer.setData('teacher', teacher);
+    e.dataTransfer.setData('sourceTime', time);
+    e.dataTransfer.setData('sourceClassroom', classroom);
   };
 
   // Handle drop
   const handleDrop = (e, time, classroom) => {
     e.preventDefault();
     const teacher = e.dataTransfer.getData('teacher');
+    const sourceTime = e.dataTransfer.getData('sourceTime');
+    const sourceClassroom = e.dataTransfer.getData('sourceClassroom');
     
     // Remove any existing assignment for this time/classroom
-    const newAssignments = assignments.filter(a => 
+    let newAssignments = assignments.filter(a => 
       !(a.time === time && a.classroom === classroom)
     );
+    
+    // If moving an existing assignment, remove it from its original location
+    if (sourceTime && sourceClassroom) {
+      newAssignments = newAssignments.filter(a => 
+        !(a.time === sourceTime && a.classroom === sourceClassroom)
+      );
+    }
     
     // Add the new assignment
     newAssignments.push({ time, classroom, teacher });
@@ -91,7 +102,16 @@ const SubstituteCalendar = () => {
                     onDrop={(e) => handleDrop(e, time, room)}
                   >
                     {getAssignment(time, room) && (
-                      <div className="bg-blue-100 text-blue-800 p-2 rounded text-sm text-center">
+                      <div
+                        className="bg-blue-100 text-blue-800 p-2 rounded text-sm text-center cursor-move"
+                        draggable
+                        onDragStart={(e) => handleDragStart(
+                          e,
+                          getAssignment(time, room).teacher,
+                          time,
+                          room
+                        )}
+                      >
                         {getAssignment(time, room).teacher}
                       </div>
                     )}
