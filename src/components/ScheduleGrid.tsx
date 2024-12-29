@@ -27,8 +27,14 @@ export default function ScheduleGrid({ timeBlocks, setTimeBlocks, employees }: S
     setDraggingBlock(null)
   }
 
-  // Generate unique time slots
-  const timeSlots = [...new Set(timeBlocks.map(block => block.startTime))].sort()
+  const timeSlots = Array.from({ length: 9 }, (_, i) => `${i + 8}:00`); // 8:00 AM to 4:00 PM
+  const DAILY_HOURS = 8; // 8 hours per day
+
+  const calculateUsedHours = (employeeId: string) => {
+    return timeBlocks
+      .filter(block => block.employeeId === employeeId)
+      .length;
+  };
 
   return (
     <div className="schedule-grid">
@@ -37,34 +43,49 @@ export default function ScheduleGrid({ timeBlocks, setTimeBlocks, employees }: S
         {employees.map(employee => (
           <div key={employee.id} className="employee-column-header">
             {employee.name}
+            <div className="time-bank-indicator">
+              {calculateUsedHours(employee.id)}/{DAILY_HOURS} hrs
+            </div>
           </div>
         ))}
       </div>
-      {timeSlots.map(timeSlot => (
-        <div key={timeSlot} className="schedule-row">
-          <div className="time-label">{timeSlot}</div>
-          {employees.map(employee => {
-            const block = timeBlocks.find(b => 
-              b.startTime === timeSlot && b.employeeId === employee.id
-            )
-            return (
-              <TimeBlockComponent
-                key={`${timeSlot}-${employee.id}`}
-                block={block || { 
-                  id: `${timeSlot}-${employee.id}`, 
-                  employeeId: null, 
-                  startTime: timeSlot, 
-                  endTime: '', 
-                  roleRequired: employee.role 
-                }}
-                employee={block ? employee : undefined}
-                onDragStart={() => setDraggingBlock(block || null)}
-                onDrop={() => block ? handleDrop(block, employee.id) : undefined}
-              />
-            )
-          })}
+      <div className="schedule-row">
+        <div className="time-scale">
+          {timeSlots.map(time => (
+            <div key={time} className="time-marker">
+              {time}
+            </div>
+          ))}
         </div>
-      ))}
+        {employees.map(employee => (
+          <div key={employee.id} className="employee-column">
+            {timeSlots.map(timeSlot => {
+              const block = timeBlocks.find(b => 
+                b.startTime === timeSlot && b.employeeId === employee.id
+              )
+              return (
+                <TimeBlockComponent
+                  key={`${timeSlot}-${employee.id}`}
+                  block={block || { 
+                    id: `${timeSlot}-${employee.id}`, 
+                    employeeId: null, 
+                    startTime: timeSlot, 
+                    endTime: '', 
+                    roleRequired: employee.role 
+                  }}
+                  employee={block ? employee : undefined}
+                  onDragStart={() => setDraggingBlock(block || null)}
+                  onDrop={() => {
+                    if (block && calculateUsedHours(employee.id) < DAILY_HOURS) {
+                      handleDrop(block, employee.id)
+                    }
+                  }}
+                />
+              )
+            })}
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
