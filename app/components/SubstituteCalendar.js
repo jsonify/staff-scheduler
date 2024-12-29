@@ -44,6 +44,20 @@ const SubstituteCalendar = () => {
     e.dataTransfer.setData('sourceClassroom', classroom);
   };
 
+  // Deduct time from teacher's bank
+  const deductTime = (teacher) => {
+    setSubstitutes(prev => {
+      const updated = prev.map(sub => {
+        if (sub.name === teacher && sub.timeBank > 0) {
+          console.log(`Deducting 1 hour from ${teacher} (was ${sub.timeBank})`);
+          return { ...sub, timeBank: sub.timeBank - 1 };
+        }
+        return sub;
+      });
+      return updated;
+    });
+  };
+
   // Handle drop
   const handleDrop = (e, time, classroom) => {
     e.preventDefault();
@@ -63,17 +77,7 @@ const SubstituteCalendar = () => {
       );
     } else {
       // Deduct time only for new assignments
-      console.log('Before update:', substitutes);
-      setSubstitutes(prev => {
-        const updated = prev.map(sub => {
-          if (sub.name === teacher && sub.timeBank > 0) {
-            return { ...sub, timeBank: sub.timeBank - 1 };
-          }
-          return sub;
-        });
-        console.log('Immediately after update:', updated);
-        return updated;
-      });
+      deductTime(teacher);
     }
     
     // Add the new assignment
@@ -95,8 +99,11 @@ const SubstituteCalendar = () => {
 
   // Log state changes
   useEffect(() => {
-    console.log('Substitutes state changed:', substitutes);
-  }, [substitutes]);
+    console.log('State changes:', {
+      substitutes,
+      assignments
+    });
+  }, [substitutes, assignments]);
 
   return (
     <div className="p-6 bg-gray-50">
