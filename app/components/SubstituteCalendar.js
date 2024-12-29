@@ -100,10 +100,10 @@ const SubstituteCalendar = () => {
   // Log state changes
   useEffect(() => {
     console.log('State changes:', {
-      substitutes,
-      assignments
+      substitutes: substitutes.map(sub => ({...sub})),
+      assignments: assignments.map(ass => ({...ass}))
     });
-  }, [substitutes, assignments]);
+  }, [JSON.stringify(substitutes), JSON.stringify(assignments)]);
 
   return (
     <div className="p-6 bg-gray-50">
