@@ -18,9 +18,13 @@ export type TimeBlock = {
   startTime: string
   endTime: string
   roleRequired: 'teacher' | 'paraeducator'
+  title?: string
+  description?: string
 }
 
 function App() {
+  const [selectedBlock, setSelectedBlock] = useState<TimeBlock | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [employees, setEmployees] = useState<Employee[]>([
     { id: '1', name: 'John Doe', role: 'teacher', hoursAvailable: 40 },
     { id: '2', name: 'Jane Smith', role: 'paraeducator', hoursAvailable: 30 },
@@ -54,6 +58,20 @@ function App() {
           timeBlocks={timeBlocks} 
           setTimeBlocks={setTimeBlocks}
           employees={employees}
+          onBlockClick={(block) => {
+            setSelectedBlock(block)
+            setIsModalOpen(true)
+          }}
+        />
+        <TimeBlockModal
+          block={selectedBlock}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSave={(updatedBlock) => {
+            setTimeBlocks(timeBlocks.map(block => 
+              block.id === updatedBlock.id ? updatedBlock : block
+            ))
+          }}
         />
         <TimeBank 
           employees={employees} 

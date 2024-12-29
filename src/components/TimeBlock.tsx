@@ -5,6 +5,7 @@ interface TimeBlockProps {
   employee: Employee | undefined
   onDragStart: (block: TimeBlock) => void
   onDrop: (e: React.DragEvent) => void
+  onBlockClick?: (block: TimeBlock) => void
   style?: React.CSSProperties
 }
 
@@ -38,14 +39,16 @@ export default function TimeBlockComponent({ block, employee, onDragStart, onDro
         margin: '5px',
         width: 'calc(100% - 10px)'
       }}
+      onClick={() => onBlockClick?.(block)}
     >
       {employee ? (
         <div className="employee-info">
-          <div>{employee.name}</div>
+          <div>{block.title || employee.name}</div>
           <div className="role-badge">{employee.role}</div>
+          {block.description && <div className="description">{block.description}</div>}
         </div>
       ) : (
-        <div className="empty-block">Open</div>
+        <div className="empty-block">{block.title || 'Click to Edit'}</div>
       )}
     </div>
   )
