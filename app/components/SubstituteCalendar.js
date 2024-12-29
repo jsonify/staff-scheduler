@@ -1,12 +1,13 @@
 "use client"
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
+// Separate Modal Component
 const AssignmentModal = ({ assignment, onClose }) => {
   if (!assignment) return null;
 
   return (
-    <div className="fixed inset-0 bg-[#272822]/90 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-[#272822]/90 flex items-center justify-center p-4 z-50">
       <div className="bg-[#3E3D32] rounded-lg p-6 max-w-md w-full border border-[#75715E]">
         <h2 className="text-xl font-bold mb-4 text-[#A6E22E]">Assignment Details</h2>
         <div className="space-y-3">
@@ -30,12 +31,48 @@ const AssignmentModal = ({ assignment, onClose }) => {
           Close
         </button>
       </div>
-      
-      {/* Assignment Modal */}
-      <AssignmentModal 
-        assignment={selectedAssignment}
-        onClose={() => setSelectedAssignment(null)}
-      />
+    </div>
+  );
+};
+
+// Assignment Card Component with Click vs Drag Detection
+const AssignmentCard = ({ assignment, onDragStart, onClick }) => {
+  const dragStartPos = useRef(null);
+  const isDragging = useRef(false);
+
+  const handleMouseDown = (e) => {
+    dragStartPos.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handleMouseUp = (e) => {
+    if (!dragStartPos.current) return;
+
+    const dx = Math.abs(e.clientX - dragStartPos.current.x);
+    const dy = Math.abs(e.clientY - dragStartPos.current.y);
+    
+    // If the mouse barely moved, consider it a click
+    if (dx < 3 && dy < 3 && !isDragging.current) {
+      onClick();
+    }
+    
+    dragStartPos.current = null;
+    isDragging.current = false;
+  };
+
+  const handleDragStart = (e) => {
+    isDragging.current = true;
+    onDragStart(e);
+  };
+
+  return (
+    <div
+      className="bg-[#AE81FF] text-[#272822] p-2 rounded text-sm text-center cursor-move shadow-sm hover:bg-[#AE81FF]/90 transition-colors"
+      draggable
+      onDragStart={handleDragStart}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+    >
+      {assignment.teacher}
     </div>
   );
 };
@@ -51,7 +88,6 @@ const SubstituteCalendar = () => {
     return `${hour}:00 ${hour < 12 ? 'AM' : 'PM'}`;
   });
 
-  // State for substitute teachers with time banks
   const [substitutes, setSubstitutes] = useState([
     { name: 'Sarah Johnson', timeBank: 8 },
     { name: 'Michael Chen', timeBank: 8 },
@@ -67,19 +103,10 @@ const SubstituteCalendar = () => {
   const [dragError, setDragError] = useState(null);
   const [selectedAssignment, setSelectedAssignment] = useState(null);
 
-  // Helper function to count current assignments for a teacher
-  const getTeacherAssignmentCount = (teacherName) => {
-    return assignments.filter(a => a.teacher === teacherName).length;
-  };
-
-  // Handle drag start with improved validation
   const handleDragStart = (e, teacher, sourceTime, sourceClassroom) => {
     const teacherData = substitutes.find(sub => sub.name === teacher);
-    
-    // Clear any previous error messages
     setDragError(null);
 
-    // If this is a new assignment (not moving an existing one)
     if (!sourceTime && !sourceClassroom) {
       if (!teacherData || teacherData.timeBank <= 0) {
         setDragError(`${teacher} has no remaining hours`);
@@ -93,7 +120,6 @@ const SubstituteCalendar = () => {
     e.dataTransfer.setData('sourceClassroom', sourceClassroom || '');
   };
 
-  // Updated deductTime function with better handling
   const deductTime = (teacher) => {
     setSubstitutes(prev => {
       const teacherIndex = prev.findIndex(sub => sub.name === teacher);
@@ -110,36 +136,30 @@ const SubstituteCalendar = () => {
     });
   };
 
-  // Updated drop handler with improved logic
   const handleDrop = (e, time, classroom) => {
     e.preventDefault();
     const teacher = e.dataTransfer.getData('teacher');
     const sourceTime = e.dataTransfer.getData('sourceTime');
     const sourceClassroom = e.dataTransfer.getData('sourceClassroom');
     
-    // Check if teacher has available hours for new assignment
     const teacherData = substitutes.find(sub => sub.name === teacher);
     if (!sourceTime && (!teacherData || teacherData.timeBank <= 0)) {
       setDragError(`Cannot assign ${teacher} - no hours remaining`);
       return;
     }
 
-    // Remove any existing assignment at the target location
     let newAssignments = assignments.filter(a => 
       !(a.time === time && a.classroom === classroom)
     );
 
-    // Handle moving existing assignment
     if (sourceTime && sourceClassroom) {
       newAssignments = newAssignments.filter(a => 
         !(a.time === sourceTime && a.classroom === sourceClassroom)
       );
     } else {
-      // Only deduct time for new assignments
       deductTime(teacher);
     }
 
-    // Add the new assignment
     setAssignments([...newAssignments, { time, classroom, teacher }]);
   };
 
@@ -147,14 +167,12 @@ const SubstituteCalendar = () => {
     e.preventDefault();
   };
 
-  // Helper to find assignment for a specific time/classroom
   const getAssignment = (time, classroom) => {
     return assignments.find(a => 
       a.time === time && a.classroom === classroom
     );
   };
 
-  // Optional: Clear error message after a delay
   useEffect(() => {
     if (dragError) {
       const timer = setTimeout(() => setDragError(null), 3000);
@@ -173,10 +191,8 @@ const SubstituteCalendar = () => {
       )}
       
       <div className="flex gap-8">
-        {/* Calendar section */}
         <div className="flex-1 overflow-auto">
           <div className="bg-[#3E3D32] rounded-lg shadow border border-[#75715E]">
-            {/* Table header */}
             <div className="flex border-b border-[#75715E]">
               <div className="w-24 flex-shrink-0 p-4 font-semibold text-[#66D9EF] bg-[#2F2F2A]">Time</div>
               {classrooms.map(room => (
@@ -189,7 +205,6 @@ const SubstituteCalendar = () => {
               ))}
             </div>
 
-            {/* Time slots and cells */}
             {timeSlots.map(time => (
               <div key={time} className="flex border-b border-[#75715E]">
                 <div className="w-24 flex-shrink-0 p-4 font-medium text-[#F8F8F2] bg-[#2F2F2A]">
@@ -203,9 +218,8 @@ const SubstituteCalendar = () => {
                     onDrop={(e) => handleDrop(e, time, room)}
                   >
                     {getAssignment(time, room) && (
-                      <div
-                        className="bg-[#AE81FF] text-[#272822] p-2 rounded text-sm text-center cursor-move shadow-sm hover:bg-[#AE81FF]/90 transition-colors"
-                        draggable
+                      <AssignmentCard
+                        assignment={getAssignment(time, room)}
                         onDragStart={(e) => handleDragStart(
                           e,
                           getAssignment(time, room).teacher,
@@ -213,9 +227,7 @@ const SubstituteCalendar = () => {
                           room
                         )}
                         onClick={() => setSelectedAssignment(getAssignment(time, room))}
-                      >
-                        {getAssignment(time, room).teacher}
-                      </div>
+                      />
                     )}
                   </div>
                 ))}
@@ -224,7 +236,6 @@ const SubstituteCalendar = () => {
           </div>
         </div>
 
-        {/* Substitute teacher bank */}
         <div className="w-64 bg-[#2F2F2A] p-4 border border-[#75715E] rounded-lg shadow-sm h-fit">
           <h2 className="text-lg font-semibold mb-4 text-[#66D9EF]">Substitute Teachers</h2>
           <div className="space-y-2">
@@ -252,6 +263,11 @@ const SubstituteCalendar = () => {
           </div>
         </div>
       </div>
+
+      <AssignmentModal 
+        assignment={selectedAssignment}
+        onClose={() => setSelectedAssignment(null)}
+      />
     </div>
   );
 };
