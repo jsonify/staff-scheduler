@@ -64,12 +64,15 @@ const SubstituteCalendar = () => {
     } else {
       // Deduct time only for new assignments
       setSubstitutes(prev => {
-        const updated = prev.map(sub => 
-          sub.name === teacher && sub.timeBank > 0 
-            ? { ...sub, timeBank: sub.timeBank - 1 }
-            : sub
-        );
-        console.log(`Time bank updated for ${teacher}: ${updated.find(sub => sub.name === teacher)?.timeBank} hours remaining`);
+        console.log('Previous state:', prev);
+        const updated = prev.map(sub => {
+          if (sub.name === teacher && sub.timeBank > 0) {
+            console.log(`Deducting 1 hour from ${teacher} (was ${sub.timeBank})`);
+            return { ...sub, timeBank: sub.timeBank - 1 };
+          }
+          return sub;
+        });
+        console.log('Updated state:', updated);
         return updated;
       });
     }
