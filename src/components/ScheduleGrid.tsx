@@ -6,9 +6,10 @@ interface ScheduleGridProps {
   timeBlocks: TimeBlock[]
   setTimeBlocks: (blocks: TimeBlock[]) => void
   employees: Employee[]
+  onBlockClick?: (block: TimeBlock) => void
 }
 
-export default function ScheduleGrid({ timeBlocks, setTimeBlocks, employees }: ScheduleGridProps) {
+export default function ScheduleGrid({ timeBlocks, setTimeBlocks, employees, onBlockClick }: ScheduleGridProps) {
   const [draggingBlock, setDraggingBlock] = useState<TimeBlock | null>(null)
 
   const handleDrop = (e: React.DragEvent, employeeId: string, timeSlot: string) => {
@@ -108,6 +109,7 @@ export default function ScheduleGrid({ timeBlocks, setTimeBlocks, employees }: S
                   employee={block ? employee : undefined}
                   onDragStart={(block) => setDraggingBlock(block)}
                   onDrop={(e) => handleDrop(e, employee.id, timeSlot)}
+                  onBlockClick={onBlockClick}
                   style={{ top: `${index * 120}px` }}
                 />
               )
