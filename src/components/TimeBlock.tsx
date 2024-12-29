@@ -10,18 +10,18 @@ interface TimeBlockProps {
 export default function TimeBlockComponent({ block, employee, onDragStart, onDrop }: TimeBlockProps) {
   return (
     <div
-      className={`time-block ${employee ? 'assigned' : ''}`}
-      draggable={!!employee}
+      className={`time-block ${employee ? 'assigned' : 'unassigned'}`}
+      draggable={true}
       onDragStart={onDragStart}
       onDragOver={(e) => e.preventDefault()}
       onDrop={onDrop}
     >
-      <div className="time-range">{block.startTime} - {block.endTime}</div>
-      {employee && (
+      {employee ? (
         <div className="employee-info">
-          <div>{employee.name}</div>
           <div className="role-badge">{employee.role}</div>
         </div>
+      ) : (
+        <div className="empty-block">Open</div>
       )}
     </div>
   )
