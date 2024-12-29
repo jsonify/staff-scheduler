@@ -32,9 +32,14 @@ const SubstituteCalendar = () => {
 
   // Handle drag start
   const handleDragStart = (e, teacher, time, classroom) => {
-    e.dataTransfer.setData('teacher', teacher);
-    e.dataTransfer.setData('sourceTime', time);
-    e.dataTransfer.setData('sourceClassroom', classroom);
+    const teacherData = substitutes.find(sub => sub.name === teacher);
+    if (teacherData && teacherData.timeBank > 0) {
+      e.dataTransfer.setData('teacher', teacher);
+      e.dataTransfer.setData('sourceTime', time);
+      e.dataTransfer.setData('sourceClassroom', classroom);
+    } else {
+      e.preventDefault();
+    }
   };
 
   // Handle drop
