@@ -4,6 +4,7 @@ import ScheduleGrid from './components/ScheduleGrid'
 import EmployeeList from './components/EmployeeList'
 import TimeBank from './components/TimeBank'
 import ThemeToggle from './components/ThemeToggle'
+import TimeBlockModal from './components/TimeBlockModal'
 
 export type Employee = {
   id: string
