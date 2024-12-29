@@ -11,18 +11,30 @@ interface ScheduleGridProps {
 export default function ScheduleGrid({ timeBlocks, setTimeBlocks, employees }: ScheduleGridProps) {
   const [draggingBlock, setDraggingBlock] = useState<TimeBlock | null>(null)
 
-  const handleDrop = (targetBlock: TimeBlock, employeeId: string) => {
+  const handleDrop = (e: React.DragEvent, employeeId: string, timeSlot: string) => {
+    e.preventDefault()
+    const draggedBlockData = e.dataTransfer.getData('text/plain')
+    if (!draggedBlockData) return
+
+    const draggedBlock = JSON.parse(draggedBlockData) as TimeBlock
+    
+    // Check if the employee has available hours
+    if (calculateUsedHours(employeeId) >= DAILY_HOURS && draggedBlock.employeeId !== employeeId) {
+      return
+    }
+
     const updatedBlocks = timeBlocks.map(block => {
-      // Remove the block from its previous employee
-      if (block.employeeId === employeeId) {
+      // Clear the previous assignment
+      if (block.id === draggedBlock.id) {
         return { ...block, employeeId: null }
       }
-      // Assign the block to the new employee
-      if (block.id === targetBlock.id) {
-        return { ...block, employeeId }
+      // Create new assignment
+      if (block.startTime === timeSlot && block.employeeId === employeeId) {
+        return { ...block, employeeId: employeeId }
       }
       return block
     })
+
     setTimeBlocks(updatedBlocks)
     setDraggingBlock(null)
   }
@@ -94,12 +106,9 @@ export default function ScheduleGrid({ timeBlocks, setTimeBlocks, employees }: S
                     roleRequired: employee.role 
                   }}
                   employee={block ? employee : undefined}
-                  onDragStart={() => setDraggingBlock(block || null)}
-                  onDrop={() => {
-                    if (block && calculateUsedHours(employee.id) < DAILY_HOURS) {
-                      handleDrop(block, employee.id)
-                    }
-                  }}
+                  onDragStart={(block) => setDraggingBlock(block)}
+                  onDrop={(e) => handleDrop(e, employee.id, timeSlot)}
+                  style={{ top: `${index * 120}px` }}
                 />
               )
             })}

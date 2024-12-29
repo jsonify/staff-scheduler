@@ -161,9 +161,15 @@
   border: 1px solid var(--border-color);
   padding: 1rem;
   border-radius: 8px;
-  cursor: pointer;
+  cursor: move;
   transition: all 0.2s;
   background-color: var(--background-color);
+  user-select: none;
+}
+
+.time-block.dragging {
+  opacity: 0.5;
+  transform: scale(0.95);
 }
 
 .time-block:hover {
