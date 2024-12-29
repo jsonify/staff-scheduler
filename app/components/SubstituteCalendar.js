@@ -3,8 +3,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 // Separate Modal Component
-const AssignmentModal = ({ assignment, onClose }) => {
+const AssignmentModal = ({ assignment, onClose, onReturnToBank }) => {
   if (!assignment) return null;
+
+  const handleReturn = () => {
+    onReturnToBank(assignment);
+    onClose();
+  };
 
   return (
     <div className="fixed inset-0 bg-[#272822]/90 flex items-center justify-center p-4 z-50">
@@ -24,12 +29,20 @@ const AssignmentModal = ({ assignment, onClose }) => {
             <p className="text-[#F8F8F2]">{assignment.classroom}</p>
           </div>
         </div>
-        <button 
-          onClick={onClose}
-          className="mt-6 px-4 py-2 bg-[#AE81FF] text-[#272822] rounded hover:bg-[#AE81FF]/90 transition-colors"
-        >
-          Close
-        </button>
+        <div className="mt-6 flex gap-3">
+          <button 
+            onClick={handleReturn}
+            className="flex-1 px-4 py-2 bg-[#F92672] text-[#272822] rounded hover:bg-[#F92672]/90 transition-colors"
+          >
+            Return to Bank
+          </button>
+          <button 
+            onClick={onClose}
+            className="flex-1 px-4 py-2 bg-[#AE81FF] text-[#272822] rounded hover:bg-[#AE81FF]/90 transition-colors"
+          >
+            Close
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -131,6 +144,28 @@ const SubstituteCalendar = () => {
       updated[teacherIndex] = {
         ...updated[teacherIndex],
         timeBank: updated[teacherIndex].timeBank - 1
+      };
+      return updated;
+    });
+  };
+
+  const returnToBank = (assignment) => {
+    // Remove the assignment
+    setAssignments(prev => prev.filter(a => 
+      !(a.time === assignment.time && 
+        a.classroom === assignment.classroom && 
+        a.teacher === assignment.teacher)
+    ));
+
+    // Add 1 hour back to the teacher's time bank
+    setSubstitutes(prev => {
+      const teacherIndex = prev.findIndex(sub => sub.name === assignment.teacher);
+      if (teacherIndex === -1) return prev;
+
+      const updated = [...prev];
+      updated[teacherIndex] = {
+        ...updated[teacherIndex],
+        timeBank: updated[teacherIndex].timeBank + 1
       };
       return updated;
     });
@@ -267,6 +302,7 @@ const SubstituteCalendar = () => {
       <AssignmentModal 
         assignment={selectedAssignment}
         onClose={() => setSelectedAssignment(null)}
+        onReturnToBank={returnToBank}
       />
     </div>
   );
