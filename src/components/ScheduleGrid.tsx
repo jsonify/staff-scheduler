@@ -107,5 +107,6 @@ export default function ScheduleGrid({ timeBlocks, setTimeBlocks, employees }: S
         ))}
       </div>
     </div>
+    </div>
   )
 }
