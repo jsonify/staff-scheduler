@@ -33,11 +33,13 @@ const SubstituteCalendar = () => {
   // Handle drag start
   const handleDragStart = (e, teacher, time, classroom) => {
     const teacherData = substitutes.find(sub => sub.name === teacher);
+    console.log(`Drag start - ${teacher}: ${teacherData?.timeBank} hours remaining`);
     if (teacherData && teacherData.timeBank > 0) {
       e.dataTransfer.setData('teacher', teacher);
       e.dataTransfer.setData('sourceTime', time);
       e.dataTransfer.setData('sourceClassroom', classroom);
     } else {
+      console.log(`Cannot drag ${teacher} - no hours remaining`);
       e.preventDefault();
     }
   };
@@ -61,13 +63,15 @@ const SubstituteCalendar = () => {
       );
     } else {
       // Deduct time only for new assignments
-      setSubstitutes(prev => 
-        prev.map(sub => 
+      setSubstitutes(prev => {
+        const updated = prev.map(sub => 
           sub.name === teacher && sub.timeBank > 0 
             ? { ...sub, timeBank: sub.timeBank - 1 }
             : sub
-        )
-      );
+        );
+        console.log(`Time bank updated for ${teacher}: ${updated.find(sub => sub.name === teacher)?.timeBank} hours remaining`);
+        return updated;
+      });
     }
     
     // Add the new assignment
