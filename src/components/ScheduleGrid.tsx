@@ -94,7 +94,7 @@ export default function ScheduleGrid({ timeBlocks, setTimeBlocks, employees, onB
             <div key={employee.id} className="employee-column">
               {timeSlots.map((timeSlot, index) => {
               const block = timeBlocks.find(b => 
-                b.startTime === timeSlot && b.employeeId === employee.id
+                b.startTime === timeSlot
               )
               return (
                 <TimeBlockComponent

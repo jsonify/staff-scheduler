@@ -13,10 +13,14 @@ export default function TimeBlockModal({ block, isOpen, onClose, onSave }: TimeB
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const formData = new FormData(e.target as HTMLFormElement)
-    const updatedBlock = {
+    const updatedBlock: TimeBlock = {
       ...block,
-      title: formData.get('title') as string,
-      description: formData.get('description') as string,
+      id: block.id,
+      employeeId: block.employeeId,
+      startTime: block.startTime,
+      endTime: block.endTime,
+      title: formData.get('title') as string || '',
+      description: formData.get('description') as string || '',
       roleRequired: formData.get('roleRequired') as 'teacher' | 'paraeducator'
     }
     onSave(updatedBlock)
