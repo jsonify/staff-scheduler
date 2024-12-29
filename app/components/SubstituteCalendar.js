@@ -46,6 +46,7 @@ const SubstituteCalendar = () => {
 
   // Deduct time from teacher's bank
   const deductTime = (teacher) => {
+    console.log('Attempting to deduct time from:', teacher);
     setSubstitutes(prev => {
       const updated = prev.map(sub => {
         if (sub.name === teacher && sub.timeBank > 0) {
@@ -54,6 +55,7 @@ const SubstituteCalendar = () => {
         }
         return sub;
       });
+      console.log('Updated substitutes:', updated);
       return updated;
     });
   };
@@ -70,19 +72,25 @@ const SubstituteCalendar = () => {
       !(a.time === time && a.classroom === classroom)
     );
     
+    console.log('Processing drop for:', { teacher, time, classroom });
+    console.log('Source:', { sourceTime, sourceClassroom });
+    
     // If moving an existing assignment, remove it from its original location
     if (sourceTime && sourceClassroom) {
+      console.log('Moving existing assignment');
       newAssignments = newAssignments.filter(a => 
         !(a.time === sourceTime && a.classroom === sourceClassroom)
       );
     } else {
       // Deduct time only for new assignments
+      console.log('Creating new assignment - deducting time');
       deductTime(teacher);
     }
     
     // Add the new assignment
-    newAssignments.push({ time, classroom, teacher });
-    setAssignments(newAssignments);
+    const newAssignment = { time, classroom, teacher };
+    console.log('Adding new assignment:', newAssignment);
+    setAssignments([...newAssignments, newAssignment]);
   };
 
   // Helper to find assignment for a specific time/classroom
