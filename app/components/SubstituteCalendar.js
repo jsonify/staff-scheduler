@@ -34,14 +34,14 @@ const SubstituteCalendar = () => {
   const handleDragStart = (e, teacher, time, classroom) => {
     const teacherData = substitutes.find(sub => sub.name === teacher);
     console.log(`Drag start - ${teacher}: ${teacherData?.timeBank} hours remaining`);
-    if (teacherData && teacherData.timeBank > 0) {
-      e.dataTransfer.setData('teacher', teacher);
-      e.dataTransfer.setData('sourceTime', time);
-      e.dataTransfer.setData('sourceClassroom', classroom);
-    } else {
+    if (!teacherData || teacherData.timeBank <= 0) {
       console.log(`Cannot drag ${teacher} - no hours remaining`);
       e.preventDefault();
+      return;
     }
+    e.dataTransfer.setData('teacher', teacher);
+    e.dataTransfer.setData('sourceTime', time);
+    e.dataTransfer.setData('sourceClassroom', classroom);
   };
 
   // Handle drop
