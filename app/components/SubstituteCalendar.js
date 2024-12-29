@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const SubstituteCalendar = () => {
   // Mock data for classrooms
@@ -63,16 +63,15 @@ const SubstituteCalendar = () => {
       );
     } else {
       // Deduct time only for new assignments
+      console.log('Before update:', substitutes);
       setSubstitutes(prev => {
-        console.log('Previous state:', prev);
         const updated = prev.map(sub => {
           if (sub.name === teacher && sub.timeBank > 0) {
-            console.log(`Deducting 1 hour from ${teacher} (was ${sub.timeBank})`);
             return { ...sub, timeBank: sub.timeBank - 1 };
           }
           return sub;
         });
-        console.log('Updated state:', updated);
+        console.log('Immediately after update:', updated);
         return updated;
       });
     }
@@ -93,6 +92,11 @@ const SubstituteCalendar = () => {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
+
+  // Log state changes
+  useEffect(() => {
+    console.log('Substitutes state changed:', substitutes);
+  }, [substitutes]);
 
   return (
     <div className="p-6 bg-gray-50">
