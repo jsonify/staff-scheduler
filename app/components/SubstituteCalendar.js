@@ -21,8 +21,8 @@ const SubstituteCalendar = () => {
     return `${hour}:00 ${hour < 12 ? 'AM' : 'PM'}`;
   });
 
-  // State to track assignments
-  const [assignments, setAssignments] = useState({});
+  // State to track assignments as an array of objects
+  const [assignments, setAssignments] = useState([]);
 
   // Handle drag start
   const handleDragStart = (e, teacher) => {
@@ -33,10 +33,22 @@ const SubstituteCalendar = () => {
   const handleDrop = (e, time, classroom) => {
     e.preventDefault();
     const teacher = e.dataTransfer.getData('teacher');
-    setAssignments(prev => ({
-      ...prev,
-      [`${time}-${classroom}`]: teacher
-    }));
+    
+    // Remove any existing assignment for this time/classroom
+    const newAssignments = assignments.filter(a => 
+      !(a.time === time && a.classroom === classroom)
+    );
+    
+    // Add the new assignment
+    newAssignments.push({ time, classroom, teacher });
+    setAssignments(newAssignments);
+  };
+
+  // Helper to find assignment for a specific time/classroom
+  const getAssignment = (time, classroom) => {
+    return assignments.find(a => 
+      a.time === time && a.classroom === classroom
+    );
   };
 
   // Handle drag over
@@ -78,9 +90,9 @@ const SubstituteCalendar = () => {
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, time, room)}
                   >
-                    {assignments[`${time}-${room}`] && (
+                    {getAssignment(time, room) && (
                       <div className="bg-blue-100 text-blue-800 p-2 rounded text-sm text-center">
-                        {assignments[`${time}-${room}`]}
+                        {getAssignment(time, room).teacher}
                       </div>
                     )}
                   </div>
