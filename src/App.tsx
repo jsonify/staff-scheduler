@@ -33,17 +33,19 @@ function App() {
 
   const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>(() => {
     const blocks: TimeBlock[] = []
-    for (let hour = 8; hour < 18; hour++) {
-      for (let minute = 0; minute < 60; minute += 30) {
-        const startTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
-        const endTime = `${hour.toString().padStart(2, '0')}:${(minute + 30).toString().padStart(2, '0')}`
-        blocks.push({
-          id: `${startTime}-${endTime}`,
-          employeeId: null,
-          startTime,
-          endTime,
-          roleRequired: 'teacher',
-        })
+    for (const employee of employees) {
+      for (let hour = 8; hour < 18; hour++) {
+        for (let minute = 0; minute < 60; minute += 30) {
+          const startTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
+          const endTime = `${hour.toString().padStart(2, '0')}:${(minute + 30).toString().padStart(2, '0')}`
+          blocks.push({
+            id: `${startTime}-${endTime}-${employee.id}`,
+            employeeId: employee.id,
+            startTime,
+            endTime,
+            roleRequired: employee.role,
+          })
+        }
       }
     }
     return blocks
