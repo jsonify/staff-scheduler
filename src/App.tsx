@@ -55,7 +55,10 @@ function App() {
           setTimeBlocks={setTimeBlocks}
           employees={employees}
         />
-        <TimeBank employees={employees} />
+        <TimeBank 
+          employees={employees} 
+          timeBlocks={timeBlocks}
+        />
       </div>
     </div>
   )
