@@ -33,6 +33,7 @@ export default function ScheduleGrid({ timeBlocks, setTimeBlocks, employees }: S
   return (
     <div className="schedule-grid">
       <div className="schedule-header">
+        <div className="time-header">Time</div>
         {employees.map(employee => (
           <div key={employee.id} className="employee-column-header">
             {employee.name}
