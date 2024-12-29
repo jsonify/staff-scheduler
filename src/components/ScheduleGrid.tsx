@@ -36,6 +36,20 @@ export default function ScheduleGrid({ timeBlocks, setTimeBlocks, employees }: S
       .length;
   };
 
+  const renderTimeGrid = () => {
+    return (
+      <div className="time-grid">
+        {timeSlots.map((time, index) => (
+          <div
+            key={time}
+            className="hour-line"
+            style={{ top: `${index * 120}px` }}
+          />
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="schedule-grid">
       <div className="schedule-header">
@@ -49,17 +63,23 @@ export default function ScheduleGrid({ timeBlocks, setTimeBlocks, employees }: S
           </div>
         ))}
       </div>
-      <div className="schedule-row">
+      <div className="schedule-content">
         <div className="time-scale">
-          {timeSlots.map(time => (
-            <div key={time} className="time-marker">
+          {timeSlots.map((time, index) => (
+            <div
+              key={time}
+              className="time-marker"
+              style={{ position: 'absolute', top: `${index * 120}px` }}
+            >
               {time}
             </div>
           ))}
         </div>
-        {employees.map(employee => (
-          <div key={employee.id} className="employee-column">
-            {timeSlots.map(timeSlot => {
+        <div className="schedule-body">
+          {renderTimeGrid()}
+          {employees.map(employee => (
+            <div key={employee.id} className="employee-column">
+              {timeSlots.map((timeSlot, index) => {
               const block = timeBlocks.find(b => 
                 b.startTime === timeSlot && b.employeeId === employee.id
               )

@@ -38,30 +38,24 @@
 }
 
 .schedule-grid {
-  display: grid;
-  grid-template-rows: auto;
-  gap: 0.5rem;
-  height: fit-content;
-  padding: 1rem;
+  display: flex;
+  flex-direction: column;
   background-color: var(--background-color);
-  overflow-x: auto;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: relative;
+  overflow: hidden;
+  height: calc(100vh - 200px);
 }
 
 .time-scale {
-  position: absolute;
+  position: sticky;
   left: 0;
-  top: 48px;
-  bottom: 0;
-  width: 100px;
+  width: 60px;
+  height: 100%;
+  background-color: var(--background-color);
   border-right: 1px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 0.5rem 0;
+  z-index: 2;
 }
 
 .time-marker {
@@ -83,38 +77,64 @@
   opacity: 0.3;
 }
 
+.schedule-content {
+  display: flex;
+  overflow-x: auto;
+  position: relative;
+}
+
 .schedule-header {
-  display: grid;
-  grid-template-columns: 100px repeat(auto-fill, minmax(150px, 1fr));
-  gap: 0.5rem;
-  align-items: center;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
+  display: flex;
+  position: sticky;
+  top: 0;
   background-color: var(--background-color);
-  padding: 0.5rem;
+  z-index: 3;
   border-bottom: 2px solid var(--border-color);
 }
 
 .time-header {
-  text-align: right;
-  padding-right: 1rem;
+  width: 60px;
+  padding: 1rem 0.5rem;
+  text-align: center;
   font-weight: bold;
   color: var(--text-color);
+  background-color: var(--background-color);
 }
 
-.schedule-row {
-  display: grid;
-  grid-template-columns: 100px repeat(auto-fill, minmax(150px, 1fr));
-  gap: 0.5rem;
-  min-height: 600px;
+.schedule-body {
+  display: flex;
+  flex: 1;
   position: relative;
+}
+
+.time-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.hour-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--border-color);
+  opacity: 0.3;
 }
 
 .employee-column {
-  background-color: var(--background-color);
-  border-left: 1px solid var(--border-color);
+  flex: 1;
+  min-width: 200px;
+  border-right: 1px solid var(--border-color);
   position: relative;
-  padding: 0.5rem;
+  height: 960px; /* 8 hours * 60px per hour */
+}
+
+.employee-column:last-child {
+  border-right: none;
 }
 
 .time-bank-indicator {
