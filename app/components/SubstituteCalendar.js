@@ -2,6 +2,44 @@
 
 import React, { useState, useEffect } from 'react';
 
+const AssignmentModal = ({ assignment, onClose }) => {
+  if (!assignment) return null;
+
+  return (
+    <div className="fixed inset-0 bg-[#272822]/90 flex items-center justify-center p-4">
+      <div className="bg-[#3E3D32] rounded-lg p-6 max-w-md w-full border border-[#75715E]">
+        <h2 className="text-xl font-bold mb-4 text-[#A6E22E]">Assignment Details</h2>
+        <div className="space-y-3">
+          <div>
+            <p className="text-[#66D9EF]">Teacher:</p>
+            <p className="text-[#F8F8F2]">{assignment.teacher}</p>
+          </div>
+          <div>
+            <p className="text-[#66D9EF]">Time:</p>
+            <p className="text-[#F8F8F2]">{assignment.time}</p>
+          </div>
+          <div>
+            <p className="text-[#66D9EF]">Classroom:</p>
+            <p className="text-[#F8F8F2]">{assignment.classroom}</p>
+          </div>
+        </div>
+        <button 
+          onClick={onClose}
+          className="mt-6 px-4 py-2 bg-[#AE81FF] text-[#272822] rounded hover:bg-[#AE81FF]/90 transition-colors"
+        >
+          Close
+        </button>
+      </div>
+      
+      {/* Assignment Modal */}
+      <AssignmentModal 
+        assignment={selectedAssignment}
+        onClose={() => setSelectedAssignment(null)}
+      />
+    </div>
+  );
+};
+
 const SubstituteCalendar = () => {
   const classrooms = [
     'Room 101', 'Room 102', 'Room 103', 'Room 104', 'Room 105',
@@ -27,6 +65,7 @@ const SubstituteCalendar = () => {
 
   const [assignments, setAssignments] = useState([]);
   const [dragError, setDragError] = useState(null);
+  const [selectedAssignment, setSelectedAssignment] = useState(null);
 
   // Helper function to count current assignments for a teacher
   const getTeacherAssignmentCount = (teacherName) => {
@@ -173,6 +212,7 @@ const SubstituteCalendar = () => {
                           time,
                           room
                         )}
+                        onClick={() => setSelectedAssignment(getAssignment(time, room))}
                       >
                         {getAssignment(time, room).teacher}
                       </div>
