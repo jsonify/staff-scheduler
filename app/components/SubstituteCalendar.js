@@ -124,11 +124,11 @@ const SubstituteCalendar = () => {
   }, [dragError]);
 
   return (
-    <div className="p-6 bg-orange-50">
-      <h1 className="text-3xl font-bold mb-8 text-orange-900">Daily Substitute Teacher Schedule</h1>
+    <div className="p-6 bg-[#272822] min-h-screen">
+      <h1 className="text-3xl font-bold mb-8 text-[#A6E22E]">Daily Substitute Teacher Schedule</h1>
       
       {dragError && (
-        <div className="mb-4 p-3 bg-red-200 text-red-900 rounded-lg">
+        <div className="mb-4 p-3 bg-[#F92672]/20 text-[#F92672] rounded-lg border border-[#F92672]/30">
           {dragError}
         </div>
       )}
@@ -136,14 +136,14 @@ const SubstituteCalendar = () => {
       <div className="flex gap-8">
         {/* Calendar section */}
         <div className="flex-1 overflow-auto">
-          <div className="bg-orange-100 rounded-lg shadow border border-orange-200">
+          <div className="bg-[#3E3D32] rounded-lg shadow border border-[#75715E]">
             {/* Table header */}
-            <div className="flex border-b border-orange-200">
-              <div className="w-24 flex-shrink-0 p-4 font-semibold text-orange-900 bg-orange-50">Time</div>
+            <div className="flex border-b border-[#75715E]">
+              <div className="w-24 flex-shrink-0 p-4 font-semibold text-[#66D9EF] bg-[#2F2F2A]">Time</div>
               {classrooms.map(room => (
                 <div 
                   key={room} 
-                  className="flex-1 p-4 font-semibold text-orange-900 text-center bg-orange-50 border-l border-orange-200"
+                  className="flex-1 p-4 font-semibold text-[#66D9EF] text-center bg-[#2F2F2A] border-l border-[#75715E]"
                 >
                   {room}
                 </div>
@@ -152,20 +152,20 @@ const SubstituteCalendar = () => {
 
             {/* Time slots and cells */}
             {timeSlots.map(time => (
-              <div key={time} className="flex border-b border-orange-200">
-                <div className="w-24 flex-shrink-0 p-4 font-medium text-orange-800 bg-orange-50">
+              <div key={time} className="flex border-b border-[#75715E]">
+                <div className="w-24 flex-shrink-0 p-4 font-medium text-[#F8F8F2] bg-[#2F2F2A]">
                   {time}
                 </div>
                 {classrooms.map(room => (
                   <div
                     key={`${time}-${room}`}
-                    className="flex-1 p-4 min-h-16 border-l border-orange-200"
+                    className="flex-1 p-4 min-h-16 border-l border-[#75715E] bg-[#3E3D32]"
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, time, room)}
                   >
                     {getAssignment(time, room) && (
                       <div
-                        className="bg-amber-200 text-amber-900 p-2 rounded text-sm text-center cursor-move shadow-sm hover:bg-amber-300 transition-colors"
+                        className="bg-[#AE81FF] text-[#272822] p-2 rounded text-sm text-center cursor-move shadow-sm hover:bg-[#AE81FF]/90 transition-colors"
                         draggable
                         onDragStart={(e) => handleDragStart(
                           e,
@@ -185,24 +185,24 @@ const SubstituteCalendar = () => {
         </div>
 
         {/* Substitute teacher bank */}
-        <div className="w-64 bg-orange-50 p-4 border border-orange-200 rounded-lg shadow-sm h-fit">
-          <h2 className="text-lg font-semibold mb-4 text-orange-900">Substitute Teachers</h2>
+        <div className="w-64 bg-[#2F2F2A] p-4 border border-[#75715E] rounded-lg shadow-sm h-fit">
+          <h2 className="text-lg font-semibold mb-4 text-[#66D9EF]">Substitute Teachers</h2>
           <div className="space-y-2">
             {substitutes.map((teacher) => (
               <div
                 key={teacher.name}
                 draggable={teacher.timeBank > 0}
                 onDragStart={(e) => handleDragStart(e, teacher.name)}
-                className={`p-3 bg-orange-100 rounded border border-orange-200 transition-colors ${
+                className={`p-3 bg-[#3E3D32] rounded border border-[#75715E] transition-colors ${
                   teacher.timeBank > 0 
-                    ? 'cursor-move hover:bg-orange-200' 
+                    ? 'cursor-move hover:bg-[#3E3D32]/80' 
                     : 'opacity-50 cursor-not-allowed'
                 }`}
               >
                 <div className="flex justify-between items-center">
-                  <span className="text-orange-900">{teacher.name}</span>
+                  <span className="text-[#F8F8F2]">{teacher.name}</span>
                   <span className={`text-sm ${
-                    teacher.timeBank === 0 ? 'text-red-700' : 'text-orange-700'
+                    teacher.timeBank === 0 ? 'text-[#F92672]' : 'text-[#E6DB74]'
                   }`}>
                     {teacher.timeBank}h
                   </span>
