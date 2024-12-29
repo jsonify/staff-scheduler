@@ -9,10 +9,16 @@ const SubstituteCalendar = () => {
     'Room 106', 'Room 107', 'Room 108', 'Room 109', 'Room 110'
   ];
 
-  // Mock data for substitute teachers
-  const [substitutes] = useState([
-    'Sarah Johnson', 'Michael Chen', 'Emily Rodriguez', 'David Kim',
-    'Rachel Thompson', 'James Wilson', 'Maria Garcia', 'Steven Lee'
+  // State for substitute teachers with time banks
+  const [substitutes, setSubstitutes] = useState([
+    { name: 'Sarah Johnson', timeBank: 8 },
+    { name: 'Michael Chen', timeBank: 8 },
+    { name: 'Emily Rodriguez', timeBank: 8 },
+    { name: 'David Kim', timeBank: 8 },
+    { name: 'Rachel Thompson', timeBank: 8 },
+    { name: 'James Wilson', timeBank: 8 },
+    { name: 'Maria Garcia', timeBank: 8 },
+    { name: 'Steven Lee', timeBank: 8 }
   ]);
 
   // Generate time slots from 9 AM to 4 PM
@@ -47,6 +53,15 @@ const SubstituteCalendar = () => {
     if (sourceTime && sourceClassroom) {
       newAssignments = newAssignments.filter(a => 
         !(a.time === sourceTime && a.classroom === sourceClassroom)
+      );
+    } else {
+      // Deduct time only for new assignments
+      setSubstitutes(prev => 
+        prev.map(sub => 
+          sub.name === teacher && sub.timeBank > 0 
+            ? { ...sub, timeBank: sub.timeBank - 1 }
+            : sub
+        )
       );
     }
     
@@ -128,12 +143,18 @@ const SubstituteCalendar = () => {
           <div className="space-y-2">
             {substitutes.map((teacher) => (
               <div
-                key={teacher}
+                key={teacher.name}
                 draggable
-                onDragStart={(e) => handleDragStart(e, teacher)}
-                className="p-3 bg-gray-50 rounded border border-gray-200 cursor-move hover:bg-gray-100 transition-colors"
+                onDragStart={(e) => handleDragStart(e, teacher.name)}
+                className={`p-3 bg-gray-50 rounded border border-gray-200 cursor-move hover:bg-gray-100 transition-colors ${
+                  teacher.timeBank === 0 ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                title={teacher.timeBank === 0 ? 'No hours remaining' : ''}
               >
-                {teacher}
+                <div className="flex justify-between items-center">
+                  <span>{teacher.name}</span>
+                  <span className="text-sm text-gray-600">{teacher.timeBank}h</span>
+                </div>
               </div>
             ))}
           </div>
