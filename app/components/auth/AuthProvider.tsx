@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 
 interface AuthContextType {
   user: any | null;
+  isAdmin: boolean;
   isLoading: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<void>;
@@ -15,7 +16,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-// Initialize Appwrite
 const client = new Client()
   .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
   .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!);
@@ -24,6 +24,7 @@ const account = new Account(client);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -38,9 +39,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (session) {
         const currentUser = await account.get();
         setUser(currentUser);
+        // Check if user has admin role
+        setIsAdmin(currentUser.labels?.includes('admin') || false);
       }
     } catch {
       setUser(null);
+      setIsAdmin(false);
     } finally {
       setIsLoading(false);
     }
@@ -50,12 +54,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     setError(null);
     try {
-      // Create session using email and password
       const session = await account.createEmailPasswordSession(email, password);
       if (session) {
         const currentUser = await account.get();
         setUser(currentUser);
-        router.push('/calendar');
+        setIsAdmin(currentUser.labels?.includes('admin') || false);
+        router.push('/admin');
       }
     } catch (e: any) {
       setError(e.message);
@@ -69,14 +73,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await account.deleteSession('current');
       setUser(null);
-      router.push('/login');
+      setIsAdmin(false);
+      router.push('/');
     } catch (e: any) {
       setError(e.message);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, error, login, logout }}>
+    <AuthContext.Provider value={{ user, isAdmin, isLoading, error, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -89,3 +94,4 @@ export const useAuth = () => {
   }
   return context;
 };
+

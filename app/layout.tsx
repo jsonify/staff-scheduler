@@ -1,11 +1,9 @@
+// app/layout.tsx
 import { Geist, Geist_Mono } from "next/font/google";
 import type { Metadata } from 'next'
 import "./globals.css";
 import { AuthProvider } from '@/app/components/auth/AuthProvider';
-
-interface RootLayoutProps {
-  children: React.ReactNode
- }
+import Navbar from '@/app/components/layout/Navbar';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,20 +18,21 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'ParaEducator Calendar',
   description: 'Calendar system for managing paraeducator assignments',
- }
+}
 
- export default function RootLayout({
+export default function CalendarLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <html>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
         <AuthProvider>
-          {children}
+          <Navbar />
+          <main>{children}</main>
         </AuthProvider>
       </body>
     </html>
-  )
+  );
 }
