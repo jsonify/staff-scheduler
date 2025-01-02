@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { databases } from '@/app/lib/appwrite/schema';
+import { databases } from '@/app/lib/appwrite/client';
 import { ParaEducatorBank } from '@/app/components/calendar/ParaEducatorBank';
 import { TimeGrid } from '@/app/components/calendar/TimeGrid';
 import { AssignmentModal } from '@/app/components/calendar/AssignmentModal';
@@ -38,22 +38,14 @@ export default function CalendarPage() {
           databases.listDocuments(process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!, 'assignments')
         ]);
 
-        setParaEducators(paraResponse.documents.map(doc => ({
-          $id: doc.$id,
-          name: doc.name,
-          timeBank: doc.timeBank
-        } as ParaEducator)));
+        setParaEducators(paraResponse.documents as ParaEducator[]);
         
         const assignmentsWithDetails = assignResponse.documents.map(assignment => ({
           ...assignment,
-          paraEducatorName: paraEducators.find(p => p.$id === assignment.paraEducator)?.name || 'Unknown',
-          paraEducator: assignment.paraEducator,
-          time: assignment.time,
-          classroom: assignment.classroom,
-          createdBy: assignment.createdBy
-        } as AssignmentWithDetails));
+          paraEducatorName: paraEducators.find(p => p.$id === assignment.paraEducator)?.name || 'Unknown'
+        }));
         
-        setAssignments(assignmentsWithDetails);
+        setAssignments(assignmentsWithDetails as AssignmentWithDetails[]);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -81,10 +73,6 @@ export default function CalendarPage() {
 
       setAssignments(prev => [...prev, {
         ...assignment,
-        paraEducator: draggedParaEducator.$id,
-        time,
-        classroom,
-        createdBy: user.$id,
         paraEducatorName: draggedParaEducator.name
       } as AssignmentWithDetails]);
     } catch (error) {
@@ -93,19 +81,17 @@ export default function CalendarPage() {
   };
 
   const handleSaveAssignment = async (data: Partial<AssignmentWithDetails>) => {
-    if (!user) return;
+    if (!user || !selectedAssignment) return;
     try {
-      if (selectedAssignment) {
-        const updated = await databases.updateDocument(
-          process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
-          'assignments',
-          selectedAssignment.$id,
-          data
-        );
-        setAssignments(prev => prev.map(a => 
-          a.$id === selectedAssignment.$id ? { ...a, ...updated } as AssignmentWithDetails : a
-        ));
-      }
+      const updated = await databases.updateDocument(
+        process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
+        'assignments',
+        selectedAssignment.$id,
+        data
+      );
+      setAssignments(prev => prev.map(a => 
+        a.$id === selectedAssignment.$id ? { ...updated, paraEducatorName: a.paraEducatorName } as AssignmentWithDetails : a
+      ));
     } catch (error) {
       console.error('Error saving assignment:', error);
     }

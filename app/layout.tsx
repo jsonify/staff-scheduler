@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   description: 'Calendar system for managing paraeducator assignments',
 }
 
-export default function CalendarLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
